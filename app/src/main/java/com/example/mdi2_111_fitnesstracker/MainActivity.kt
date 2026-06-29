@@ -199,8 +199,29 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val entries = hourlySteps.mapIndexed { index, value ->
             BarEntry(index.toFloat(), value)
         }
+
         val dataset = BarDataSet(entries, "Steps")
-        barChart.data = BarData(dataset)
+        dataset.color = 0xFF80DEEA.toInt()
+
+        val data = BarData(dataset)
+        barChart.data = data
+
+        // X-axis labels (hours)
+        val labels = listOf("8 AM", "9 AM", "10 AM", "11 AM")
+
+        val xAxis = barChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.granularity = 1f
+        xAxis.valueFormatter =
+            com.github.mikephil.charting.formatter.IndexAxisValueFormatter(labels)
+
+        // Chart description
+        barChart.description.text = "Step count per hour"
+
+        // Optional: Improves appearance
+        barChart.axisRight.isEnabled = false
+        barChart.animateY(1000)
+
         barChart.invalidate()
     }
 
