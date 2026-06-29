@@ -98,12 +98,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         when (event.sensor.type) {
             // TODO Case 1: TYPE_ACCELEROMETER: store accelValues, call handleAccelerometer()
-            Sensor.TYPE_GYROSCOPE -> {
+            Sensor.TYPE_ACCELEROMETER -> {
                 accelValues = event.values.clone()
                 handleAccelerometer(accelValues)
             }
+
             // TODO Case 2: TYPE_GYROSCOPE: store gyroValues, call handleGyroscope()
+            Sensor.TYPE_GYROSCOPE -> {
+                handleGyroscope(event.values.clone())
+            }
+
             // TODO Case 3: TYPE_MAGNETIC_FIELD: store magnetValues, call updateCompass()
+            Sensor.TYPE_MAGNETIC_FIELD -> {
+                magnetValues = event.values.clone()
+                updateCompass()
+            }
         }
     }
 
@@ -136,13 +145,51 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     // values[0] = pitch, values[1] = roll, values[2] = yaw
     // tvGyro.text = "Rotation (Pitch, Roll, Yaw): $.2f"
     private fun handleGyroscope(values: FloatArray) {
+        val pitch = values[0]
+        val roll = values[1]
+        val yaw = values[2]
 
+        tvGyro.text = String.format(
+            "Rotation (Pitch, Roll, Yaw): %.2f, %.2f, %.2f",
+            pitch,
+            roll,
+            yaw
+        )
     }
 
     // Assignment
     // Hint: SensorManager.getRotationMatrix(rotationMatrix, inclinationMatrix, accelValues, magnetValues)
     private fun updateCompass() {
 
+        val rotationMatrix = FloatArray(9)
+        val orientation = FloatArray(3)
+
+        val success = SensorManager.getRotationMatrix(
+            rotationMatrix,
+            null,
+            accelValues,
+            magnetValues
+        )
+
+        if (success) {
+            SensorManager.getOrientation(rotationMatrix, orientation)
+
+            val azimuth = Math.toDegrees(orientation[0].toDouble())
+            val heading = (azimuth + 360) % 360
+
+            val direction = when {
+                heading >= 315 || heading < 45 -> "North"
+                heading < 135 -> "East"
+                heading < 225 -> "South"
+                else -> "West"
+            }
+
+            tvDirection.text = String.format(
+                "Direction: %s (%.4f°)",
+                direction,
+                heading
+            )
+        }
     }
 
     // Assignment 2
