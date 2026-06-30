@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#EDE7F6">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,6 +72,13 @@
             android:layout_gravity="center_horizontal"
             android:text="Refresh Charts"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnDemoMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Demo Mode"
+            android:layout_marginEnd="12dp" />
 
     </LinearLayout>
 
